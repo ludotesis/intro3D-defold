@@ -21,6 +21,8 @@ developer = Defold
 
 [physics]
 type = 3D
+use_fixed_timestep = 0
+debug = 1
 
 [osx]
 bundle_identifier = com.defold.example.basic3d
