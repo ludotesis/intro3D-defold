@@ -2,7 +2,21 @@ name: "main"
 scale_along_z: 1
 embedded_instances {
   id: "Jugador"
-  data: "embedded_components {\n"
+  data: "components {\n"
+  "  id: \"Saltar\"\n"
+  "  component: \"/script/Saltar.script\"\n"
+  "  properties {\n"
+  "    id: \"gravedad\"\n"
+  "    value: \"10.0\"\n"
+  "    type: PROPERTY_TYPE_NUMBER\n"
+  "  }\n"
+  "  properties {\n"
+  "    id: \"fuerza_salto\"\n"
+  "    value: \"15.0\"\n"
+  "    type: PROPERTY_TYPE_NUMBER\n"
+  "  }\n"
+  "}\n"
+  "embedded_components {\n"
   "  id: \"camera\"\n"
   "  type: \"camera\"\n"
   "  data: \"aspect_ratio: 1.0\\n"
@@ -15,8 +29,8 @@ embedded_instances {
   "embedded_components {\n"
   "  id: \"collisionobject\"\n"
   "  type: \"collisionobject\"\n"
-  "  data: \"type: COLLISION_OBJECT_TYPE_DYNAMIC\\n"
-  "mass: 2.0\\n"
+  "  data: \"type: COLLISION_OBJECT_TYPE_KINEMATIC\\n"
+  "mass: 0.0\\n"
   "friction: 0.1\\n"
   "restitution: 0.5\\n"
   "group: \\\"default\\\"\\n"
@@ -40,10 +54,6 @@ embedded_instances {
   ""
   position {
     y: 9.0
-  }
-  rotation {
-    x: -0.70710677
-    w: 0.70710677
   }
 }
 embedded_instances {
@@ -72,8 +82,8 @@ embedded_instances {
   "    index: 0\\n"
   "    count: 3\\n"
   "  }\\n"
-  "  data: 1.0\\n"
-  "  data: 1.0\\n"
+  "  data: 5.0\\n"
+  "  data: 5.0\\n"
   "  data: 0.5\\n"
   "}\\n"
   "\"\n"
@@ -84,8 +94,8 @@ embedded_instances {
     w: 0.70710677
   }
   scale3 {
-    x: 4.0
-    y: 4.0
+    x: 20.0
+    y: 20.0
     z: 4.0
   }
 }

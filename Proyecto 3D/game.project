@@ -21,6 +21,7 @@ developer = Defold
 
 [physics]
 type = 3D
+gravity_y = 0.0
 use_fixed_timestep = 0
 debug = 1
 

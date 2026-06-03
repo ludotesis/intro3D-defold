@@ -1,0 +1,43 @@
+-- Propiedad Configurable
+go.property("gravedad", 10)
+go.property("fuerza_salto", 5)
+
+function init(self)
+	-- Inicializar Velocidad
+	self.velocidad = vmath.vector3()
+	self.en_suelo = false
+	-- Solicitar al motor que escuche el teclado/mando
+	msg.post(".", "acquire_input_focus")
+end
+
+function update(self, dt)
+	if not self.en_suelo then
+		self.velocidad.y = self.velocidad.y - (self.gravedad * dt)
+		local pos = go.get_position()
+		pos = pos + self.velocidad * dt
+		go.set_position(pos)
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	-- Cuando un Cinemático choca contra un Estático Defold envía este mensaje
+	if message_id == hash("contact_point_response") then
+		-- Evitar que el objeto se hunda en el suelo corrigiendo su posición
+		if message.distance > 0 then
+			go.set_position(go.get_position() + message.normal * message.distance)
+		end
+		-- Esto evita que las paredes o techos congelen al personaje en el aire
+		if message.normal.y > 0.5 then
+			self.en_suelo = true
+			self.velocidad.y = 0 
+		end
+	end	
+end
+
+function on_input(self, action_id, action)
+	-- Si se activa la acción de salto, se presionó la tecla, y el personaje está en el suelo
+	if action_id == hash("saltar") and action.pressed and self.en_suelo then
+		self.en_suelo = false
+		self.velocidad.y = self.fuerza_salto
+	end
+end
