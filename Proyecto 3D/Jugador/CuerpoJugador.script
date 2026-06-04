@@ -73,7 +73,10 @@ function on_message(self, message_id, message, sender)
 		local impacto_velocidad = vmath.dot(self.velocidad_actual, message.normal)
 		if impacto_velocidad < 0 then
 			self.velocidad_actual = self.velocidad_actual - (message.normal * impacto_velocidad)
-		end	
+		end
+	elseif message_id == hash("trigger_response") then
+		print(message.other_id)
+		go.delete(message.other_id)
 	end
 end
 
