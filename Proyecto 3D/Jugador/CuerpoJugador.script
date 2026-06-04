@@ -7,11 +7,14 @@ go.property("camara", hash("/Jugador/Camara"))
 function init(self)
 	self.input_dir = vmath.vector3()
 	self.velocidad_actual = vmath.vector3()
+	self.correccion_colision = vmath.vector3()
 	self.en_suelo = false
 	msg.post(".", "acquire_input_focus")
 end
 
 function update(self, dt)
+	-- Limpiar correccion en cada frame
+	self.correccion_colision = vmath.vector3()
 	-- Aplicar Gravedad 
 	self.velocidad_actual.y = self.velocidad_actual.y + (self.gravedad * dt)
 	-- Calcular direccion
@@ -33,16 +36,26 @@ function update(self, dt)
 end
 
 function on_message(self, message_id, message, sender)
-	-- Colision Cinemática
+	-- Colision Cinematica
 	if message_id == hash("contact_point_response") then
 		-- Empujar al jugador fuera 
 		if message.distance > 0 then
-			go.set_position(go.get_position() + message.normal * message.distance)
+			local proyeccion = vmath.project(self.correccion_colision, message.normal * message.distance)
+			if proyeccion < 1 then
+				local compensacion = (message.distance - message.distance * proyeccion) * message.normal
+				go.set_position(go.get_position() + compensacion)
+				self.correccion_colision = self.correccion_colision + compensacion
+			end
 		end
+		-- Calculo de velocidad frente al obstaculo
+		local impacto_velocidad = vmath.dot(self.velocidad_actual, message.normal)
+		if impacto_velocidad < 0 then
+			self.velocidad_actual = self.velocidad_actual - (message.normal * impacto_velocidad)
+		end	
 		-- Determinar si la superficie con la que chocamos apunta hacia arriba
 		if message.normal.y > 0.7 then
 			self.en_suelo = true
-			self.velocidad_actual.y = 0 
+			--self.velocidad_actual.y = 0 
 		end
 	end
 end
