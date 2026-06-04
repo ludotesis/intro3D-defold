@@ -1,0 +1,51 @@
+-- camara.script
+go.property("sensibilidad", 0.3)
+go.property("jugador", msg.url("/Jugador/Cuerpo"))
+go.property("altura_camara", 2.0)
+
+function init(self)
+	-- Escuchar el ratón
+	msg.post(".", "acquire_input_focus")
+
+	self.rotacion_y = 0 -- Mirar a izquierda/derecha
+	self.rotacion_x = 0 -- Mirar arriba/abajo
+
+	-- Bloquear y ocultar el ratón al iniciar usando la función nativa de Defold
+	window.set_mouse_lock(true)
+end
+
+function update(self, dt)
+	-- 1. Seguir la posición del jugador
+	local posicion_jugador = go.get_position(self.jugador)
+	posicion_jugador.y = posicion_jugador.y + self.altura_camara
+	go.set_position(posicion_jugador)
+
+	-- 2. Aplicar la rotación matemática basada en nuestros movimientos del ratón
+	local q_rot_y = vmath.quat_rotation_y(math.rad(self.rotacion_y))
+	local q_rot_x = vmath.quat_rotation_x(math.rad(self.rotacion_x))
+
+	-- Multiplicar cuaterniones significa "sumar" las rotaciones
+	go.set_rotation(q_rot_y * q_rot_x)
+end
+
+function on_input(self, action_id, action)
+	-- Soltar el ratón con la tecla Escape
+	if action_id == hash("Esc") and action.released then
+		window.set_mouse_lock(false)
+	end
+
+	-- Volver a bloquear el ratón al hacer clic izquierdo en el juego
+	if action_id == hash("LeftClick") and action.released then
+		window.set_mouse_lock(true)
+	end
+
+	-- Si el ratón está bloqueado, permitimos mover la cámara
+	if window.get_mouse_lock() and action.dx and action.dy then
+		-- Mover la vista sumando la velocidad del ratón
+		self.rotacion_y = self.rotacion_y - (action.dx * self.sensibilidad)
+		self.rotacion_x = self.rotacion_x + (action.dy * self.sensibilidad)
+
+		-- Limitar la mirada hacia arriba y abajo para no rompernos el cuello (Math Clamp)
+		self.rotacion_x = math.max(-80, math.min(80, self.rotacion_x))
+	end
+end

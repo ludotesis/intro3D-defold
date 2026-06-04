@@ -1,14 +1,10 @@
 name: "Jugador"
 scale_along_z: 0
 embedded_instances {
-  id: "Jugador"
+  id: "Cuerpo"
   data: "components {\n"
-  "  id: \"cube\"\n"
-  "  component: \"/assets/models/cube.model\"\n"
-  "}\n"
-  "components {\n"
-  "  id: \"JugadorControllador\"\n"
-  "  component: \"/Jugador/JugadorControllador.script\"\n"
+  "  id: \"CuerpoJugador\"\n"
+  "  component: \"/Jugador/CuerpoJugador.script\"\n"
   "}\n"
   "embedded_components {\n"
   "  id: \"collisionobject\"\n"
@@ -39,7 +35,11 @@ embedded_instances {
 }
 embedded_instances {
   id: "Camara"
-  data: "embedded_components {\n"
+  data: "components {\n"
+  "  id: \"CamaraJugador\"\n"
+  "  component: \"/Jugador/CamaraJugador.script\"\n"
+  "}\n"
+  "embedded_components {\n"
   "  id: \"camera\"\n"
   "  type: \"camera\"\n"
   "  data: \"aspect_ratio: 1.0\\n"
@@ -51,11 +51,19 @@ embedded_instances {
   "}\n"
   ""
   position {
-    y: 6.0
-    z: 5.0
+    y: 7.0
+    z: 6.0
   }
   rotation {
-    x: -0.38268343
-    w: 0.9238795
+    x: -0.5420951
+    w: 0.84031713
   }
+}
+embedded_instances {
+  id: "Modelo"
+  data: "components {\n"
+  "  id: \"cube\"\n"
+  "  component: \"/assets/models/cube.model\"\n"
+  "}\n"
+  ""
 }

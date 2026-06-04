@@ -1,0 +1,65 @@
+-- jugador.script
+go.property("velocidad", 5)
+go.property("fuerza_salto", 6)
+go.property("gravedad", -15)
+go.property("camara", hash("/Jugador/Camara"))
+
+function init(self)
+	self.input_dir = vmath.vector3()
+	self.velocidad_actual = vmath.vector3()
+	self.en_suelo = false
+	msg.post(".", "acquire_input_focus")
+end
+
+function update(self, dt)
+	-- Aplicar Gravedad 
+	self.velocidad_actual.y = self.velocidad_actual.y + (self.gravedad * dt)
+	-- Calcular direccion
+	local direccion = vmath.vector3()
+	if vmath.length_sqr(self.input_dir) > 0 then
+		direccion = vmath.normalize(self.input_dir)
+		local rotacion_camara_y = go.get(self.camara, "euler.y")
+		local rotacion = vmath.quat_rotation_y(math.rad(rotacion_camara_y))
+		direccion = vmath.rotate(rotacion, direccion)
+	end
+	-- Asignar velocidad 
+	self.velocidad_actual.x = direccion.x * self.velocidad
+	self.velocidad_actual.z = direccion.z * self.velocidad
+	-- Mover al jugador 
+	local posicion = go.get_position()
+	go.set_position(posicion + (self.velocidad_actual * dt))
+	-- Asumimos que estamos cayendo en el aire 
+	self.en_suelo = false
+end
+
+function on_message(self, message_id, message, sender)
+	-- Colision Cinemática
+	if message_id == hash("contact_point_response") then
+		-- Empujar al jugador fuera 
+		if message.distance > 0 then
+			go.set_position(go.get_position() + message.normal * message.distance)
+		end
+		-- Determinar si la superficie con la que chocamos apunta hacia arriba
+		if message.normal.y > 0.7 then
+			self.en_suelo = true
+			self.velocidad_actual.y = 0 
+		end
+	end
+end
+
+function on_input(self, action_id, action)
+	-- Leer teclas directamente (W, A, S, D, Espacio)
+	if action_id == hash("Adelante") then
+		self.input_dir.z = action.released and 0 or -1
+	elseif action_id == hash("Atras") then
+		self.input_dir.z = action.released and 0 or 1
+	elseif action_id == hash("Izquierda") then
+		self.input_dir.x = action.released and 0 or -1
+	elseif action_id == hash("Derecha") then
+		self.input_dir.x = action.released and 0 or 1
+	elseif action_id == hash("Saltar") and self.en_suelo then
+		if action.pressed then
+			self.velocidad_actual.y = self.fuerza_salto
+		end
+	end
+end
