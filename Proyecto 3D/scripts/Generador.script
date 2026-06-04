@@ -1,0 +1,33 @@
+-- Propiedades para construir donde generar
+go.property("min_x", -10)
+go.property("max_x", 10)
+go.property("min_z", -10)
+go.property("max_z", 10)
+go.property("altura_y", 1) 
+
+-- Lista de IDs de Generadores
+local factories = {
+	"#Barril",
+	"#Caja",
+	"#Moneda"
+}
+-- Funcion para Generar
+local function spawn_item(self)
+	-- Elegir generador al azar
+	local indice_aleatorio = math.random(1, #factories)
+	local factory_elegida = factories[indice_aleatorio]
+	-- Calcular posicion aleatoria
+	local pos_x = self.min_x + math.random() * (self.max_x - self.min_x)
+	local pos_z = self.min_z + math.random() * (self.max_z - self.min_z)
+	local posicion_aparicion = vmath.vector3(pos_x, self.altura_y, pos_z)
+	-- Generar el objeto
+	factory.create(factory_elegida, posicion_aparicion)
+end
+
+function init(self)
+	-- Semilla aleatoria
+	math.randomseed(os.time())
+	math.random() 
+	-- Llamada programada
+	timer.delay(1.0, true, spawn_item)
+end
