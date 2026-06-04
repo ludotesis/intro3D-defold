@@ -23,7 +23,7 @@ developer = Defold
 type = 3D
 gravity_y = 0.0
 use_fixed_timestep = 0
-debug = 1
+debug = 0
 
 [osx]
 bundle_identifier = com.defold.example.basic3d

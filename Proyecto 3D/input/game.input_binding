@@ -1,6 +1,22 @@
 key_trigger {
   input: KEY_SPACE
-  action: "saltar"
+  action: "Saltar"
+}
+key_trigger {
+  input: KEY_W
+  action: "Adelante"
+}
+key_trigger {
+  input: KEY_S
+  action: "Atras"
+}
+key_trigger {
+  input: KEY_A
+  action: "Izquierda"
+}
+key_trigger {
+  input: KEY_D
+  action: "Derecha"
 }
 mouse_trigger {
   input: MOUSE_BUTTON_1
