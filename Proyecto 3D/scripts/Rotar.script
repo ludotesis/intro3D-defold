@@ -1,0 +1,12 @@
+go.property("velocidad_rotacion", vmath.vector3(0, 90, 0)) 
+
+function update(self, dt)
+	-- Get rotacion
+	local rotacion_actual = go.get(".", "euler")
+	-- Calcular incremento 
+	local incremento = self.velocidad_rotacion * dt
+	-- Sumar incremento
+	rotacion_actual = rotacion_actual + incremento
+	-- Set rotacion
+	go.set(".", "euler", rotacion_actual)
+end

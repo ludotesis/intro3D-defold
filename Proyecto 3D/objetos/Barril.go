@@ -2,6 +2,10 @@ components {
   id: "Barril"
   component: "/modelos/Barril.model"
 }
+components {
+  id: "Rotar"
+  component: "/scripts/Rotar.script"
+}
 embedded_components {
   id: "collisionobject"
   type: "collisionobject"

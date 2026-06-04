@@ -2,6 +2,15 @@ components {
   id: "Moneda"
   component: "/modelos/Moneda.model"
 }
+components {
+  id: "Rotar"
+  component: "/scripts/Rotar.script"
+  properties {
+    id: "velocidad_rotacion"
+    value: "0.0, 0.0, 90.0"
+    type: PROPERTY_TYPE_VECTOR3
+  }
+}
 embedded_components {
   id: "collisionobject"
   type: "collisionobject"
