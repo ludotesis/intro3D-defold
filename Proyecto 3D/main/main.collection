@@ -1,4 +1,30 @@
 name: "main"
+instances {
+  id: "Barril"
+  prototype: "/objetos/Barril.go"
+  position {
+    x: 6.0
+    y: 2.0
+    z: -5.0
+  }
+}
+instances {
+  id: "Caja"
+  prototype: "/objetos/Caja.go"
+  position {
+    x: 6.0
+    y: 2.0
+  }
+}
+instances {
+  id: "Moneda"
+  prototype: "/objetos/Moneda.go"
+  position {
+    x: 5.0
+    y: 2.0
+    z: 4.0
+  }
+}
 collection_instances {
   id: "Jugador"
   collection: "/Jugador/Jugador.collection"
