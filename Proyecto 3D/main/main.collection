@@ -2,6 +2,9 @@ name: "main"
 collection_instances {
   id: "Jugador"
   collection: "/Jugador/Jugador.collection"
+  position {
+    y: 6.0
+  }
 }
 scale_along_z: 1
 embedded_instances {
