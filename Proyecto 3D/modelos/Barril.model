@@ -1,0 +1,10 @@
+mesh: "/modelos/Barrel_A.gltf"
+name: "Barril"
+materials {
+  name: "prototype_texture"
+  material: "/builtins/materials/model.material"
+  textures {
+    sampler: "tex0"
+    texture: "/modelos/prototypebits_texture.png"
+  }
+}

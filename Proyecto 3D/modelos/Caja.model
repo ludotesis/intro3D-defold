@@ -1,0 +1,10 @@
+mesh: "/modelos/Box_A.gltf"
+name: "Caja"
+materials {
+  name: "prototype_texture"
+  material: "/builtins/materials/model.material"
+  textures {
+    sampler: "tex0"
+    texture: "/modelos/prototypebits_texture.png"
+  }
+}
