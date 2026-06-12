@@ -1,4 +1,4 @@
--- jugador.script
+
 go.property("velocidad", 5)
 go.property("fuerza_salto", 6)
 go.property("gravedad", -15)
@@ -9,6 +9,7 @@ function init(self)
 	self.velocidad_actual = vmath.vector3()
 	self.correccion_colision = vmath.vector3()
 	self.en_suelo = false
+	self.normal_pared = vmath.vector3()
 	msg.post(".", "acquire_input_focus")
 end
 
@@ -25,14 +26,28 @@ function update(self, dt)
 		local rotacion = vmath.quat_rotation_y(math.rad(rotacion_camara_y))
 		direccion = vmath.rotate(rotacion, direccion)
 	end
-	-- Asignar velocidad 
-	self.velocidad_actual.x = direccion.x * self.velocidad
-	self.velocidad_actual.z = direccion.z * self.velocidad
+	-- Calcular velocidad horizontal buscada 
+	local vel_x = direccion.x * self.velocidad
+	local vel_z = direccion.z * self.velocidad
+	-- Si estamos tocando una pared restamos desplazamiento antes de movernos
+	if vmath.length_sqr(self.normal_pared) > 0 then
+		local vector_horizontal = vmath.vector3(vel_x, 0, vel_z)
+		local impacto = vmath.dot(vector_horizontal, self.normal_pared)
+		if impacto < 0 then
+			vector_horizontal = vector_horizontal - (self.normal_pared * impacto)
+			vel_x = vector_horizontal.x
+			vel_z = vector_horizontal.z
+		end
+	end
+	-- Asignar la velocidad ya corregida (sin empujar muros)
+	self.velocidad_actual.x = vel_x
+	self.velocidad_actual.z = vel_z
 	-- Mover al jugador 
 	local posicion = go.get_position()
 	go.set_position(posicion + (self.velocidad_actual * dt))
-	-- Asumimos que estamos cayendo en el aire 
+	-- Resetear 
 	self.en_suelo = false
+	self.normal_pared = vmath.vector3()
 end
 
 function on_message(self, message_id, message, sender)
@@ -47,16 +62,22 @@ function on_message(self, message_id, message, sender)
 				self.correccion_colision = self.correccion_colision + compensacion
 			end
 		end
-		-- Calculo de velocidad frente al obstaculo
-		local impacto_velocidad = vmath.dot(self.velocidad_actual, message.normal)
-		if impacto_velocidad < 0 then
-			self.velocidad_actual = self.velocidad_actual - (message.normal * impacto_velocidad)
-		end	
 		-- Determinar si la superficie con la que chocamos apunta hacia arriba
 		if message.normal.y > 0.7 then
 			self.en_suelo = true
 			--self.velocidad_actual.y = 0 
+		elseif math.abs(message.normal.y) < 0.2 then
+			-- Guardamos direccion de pared
+			self.normal_pared = message.normal
 		end
+		-- Calculo de velocidad frente al obstaculo
+		local impacto_velocidad = vmath.dot(self.velocidad_actual, message.normal)
+		if impacto_velocidad < 0 then
+			self.velocidad_actual = self.velocidad_actual - (message.normal * impacto_velocidad)
+		end
+	elseif message_id == hash("trigger_response") then
+		print(message.other_id)
+		go.delete(message.other_id)
 	end
 end
 
